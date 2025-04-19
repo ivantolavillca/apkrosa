@@ -14,6 +14,13 @@ class _HomeScreenState extends State<HomeScreen> {
   final _generoController = TextEditingController();
   final _pesoController = TextEditingController();
   final _estaturaController = TextEditingController();
+  final _comidasDiariasController = TextEditingController();
+  int _antecedentesFamiliares = 1;
+  int _condicionesMedicas = 1;
+  int _estresAnsiedad = 1;
+  int _consumoMedicamentos = 1;
+  int _actividadesFisicas = 1;
+  int _consumoComidaRapida = 1;
   int? _estadoFisico;
   String? _recomendaciones;
   String? _imagenUrl;
@@ -26,6 +33,13 @@ class _HomeScreenState extends State<HomeScreen> {
         genero: int.parse(_generoController.text),
         peso: double.parse(_pesoController.text.replaceAll(',', '.')),
         estatura: double.parse(_estaturaController.text.replaceAll(',', '.')),
+        antecedentes_familiares: int.parse(_generoController.text),
+        condiciones_medicas: _condicionesMedicas,
+        consumo_medicamentos: _consumoMedicamentos,
+        estres_ansiedad: _estresAnsiedad,
+        actividades_fisicas: _actividadesFisicas,
+        comida_diaria: int.parse(_comidasDiariasController.text),
+        consumo_comida_rapida: _consumoComidaRapida,
       );
       showDialog(
         context: context,
@@ -42,7 +56,6 @@ class _HomeScreenState extends State<HomeScreen> {
             .realizarPrediccion(saludModel);
         Navigator.of(context).pop();
         setState(() {
-          
           _estadoFisico = response['prediccion'];
           switch (_estadoFisico) {
             case 1:
@@ -159,8 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Column(
                       children: [
                         DropdownButtonFormField<int?>(
-                          value:
-                              null, // Asegúrate de que el valor inicial sea null
+                          value: null,
                           decoration: InputDecoration(
                             labelText: 'Edad',
                             border: OutlineInputBorder(
@@ -210,7 +222,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: Text('Masculino'),
                             ),
                             DropdownMenuItem(
-                              value: '0',
+                              value: '2',
                               child: Text('Femenino'),
                             ),
                           ],
@@ -239,7 +251,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Por favor ingresa un peso válido';
+                            } else {
+                              final peso = double.tryParse(value);
+                              if (peso == null || peso <= 0 || peso > 150) {
+                                return 'Por favor ingresa un peso válido (mayor a 0 y menor a 150)';
+                              }
                             }
+
                             return null;
                           },
                         ),
@@ -256,6 +274,96 @@ class _HomeScreenState extends State<HomeScreen> {
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Por favor ingresa una estatura válida';
+                            } else {
+                              final estatura = double.tryParse(value);
+                              if (estatura == null ||
+                                  estatura <= 0 ||
+                                  estatura > 2.5) {
+                                return 'Por favor ingresa una estatura válida (mayor a 0 y menor o igual a 2.5)';
+                              }
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        CheckboxListTile(
+                          title: const Text(
+                              '¿En tu familia tienen antecedentes de obesidad?'),
+                          value: _antecedentesFamiliares == 2,
+                          onChanged: (value) {
+                            setState(() {
+                              _antecedentesFamiliares = value! ? 2 : 1;
+                            });
+                          },
+                        ),
+                        CheckboxListTile(
+                          title: const Text(
+                              '¿Sufre de condiciones médicas de obesidad?'),
+                          value: _condicionesMedicas == 2,
+                          onChanged: (value) {
+                            setState(() {
+                              _condicionesMedicas = value! ? 2 : 1;
+                            });
+                          },
+                        ),
+                        CheckboxListTile(
+                          title: const Text('¿Sufre de estrés o ansiedad?'),
+                          value: _estresAnsiedad == 2,
+                          onChanged: (value) {
+                            setState(() {
+                              _estresAnsiedad = value! ? 2 : 1;
+                            });
+                          },
+                        ),
+                        CheckboxListTile(
+                          title: const Text(
+                              '¿Consume medicamentos que puedan alterar el peso?'),
+                          value: _consumoMedicamentos == 2,
+                          onChanged: (value) {
+                            setState(() {
+                              _consumoMedicamentos = value! ? 2 : 1;
+                            });
+                          },
+                        ),
+                        CheckboxListTile(
+                          title: const Text('¿Realiza actividad física?'),
+                          value: _actividadesFisicas == 2,
+                          onChanged: (value) {
+                            setState(() {
+                              _actividadesFisicas = value! ? 2 : 1;
+                            });
+                          },
+                        ),
+                        CheckboxListTile(
+                          title: const Text(
+                              '¿Consume comida rápida frecuentemente?'),
+                          value: _consumoComidaRapida == 2,
+                          onChanged: (value) {
+                            setState(() {
+                              _consumoComidaRapida = value! ? 2 : 1;
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        TextFormField(
+                          controller: _comidasDiariasController,
+                          decoration: InputDecoration(
+                            labelText: '¿Cuántas veces come al día?',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          keyboardType: TextInputType.number,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Por favor ingresa un número válido';
+                            } else {
+                              final comida = double.tryParse(value);
+                              if (comida == null ||
+                                  comida <= 0 ||
+                                  comida > 5) {
+                                return 'Por favor ingresa un número válido (mayor a 0 y menor a 5)';
+                              }
                             }
                             return null;
                           },
@@ -274,6 +382,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           child: const Text('Realizar predicción'),
                         ),
+                        const SizedBox(height: 20),
                         if (_estadoFisico != null) ...[
                           const SizedBox(height: 20),
                           Container(

@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
         Provider(create: (_) => ApiService()),
       ],
       child: MaterialApp(
-        title: 'Front Proyecto Rosa',
+        title: 'Modelo predicción de condición física',
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
